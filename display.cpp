@@ -38,7 +38,7 @@ void transformvec (const GLfloat input[4], GLfloat output[4]) {
   }
 }
 
-void getScreenLightPos() {
+void getScreenLightPos(const GLfloat light[4], int offset) {
  // Calculate light position on screen
   double projectionMatrix[16], modelViewMatrix[16];
   int view[4];
@@ -46,7 +46,7 @@ void getScreenLightPos() {
   glGetDoublev(GL_MODELVIEW_MATRIX, modelViewMatrix);
   glGetIntegerv(GL_VIEWPORT, view);
   GLdouble lightcoords[3];
-  gluProject((double)lightposn[0], (double)lightposn[1], (double)lightposn[2], modelViewMatrix, projectionMatrix, view, &lightcoords[0], &lightcoords[1], &lightcoords[2]);
+  gluProject((double)light[0], (double)light[1], (double)light[2], modelViewMatrix, projectionMatrix, view, &lightcoords[0], &lightcoords[1], &lightcoords[2]);
   screenLightX = lightcoords[0]/view[2];
   screenLightY = lightcoords[1]/view[3];
 }
@@ -75,13 +75,12 @@ void drawOcclusionMap() {
     const GLfloat _light[] = {lightposn[4*i], lightposn[4*i+1], lightposn[4*i+2], lightposn[4*i+3]};
     GLfloat light[4];
     transformvec(_light, light);
-    const GLfloat _color[] = {lightcolor[4*i], lightcolor[4*i+1], lightcolor[4*i+2], lightcolor[4*i+3]};
-  /*
-    glColor3fv(&_color[0]);
+    getScreenLightPos(light, i);
+    GLfloat color[] = {lightcolor[4*i], lightcolor[4*i+1], lightcolor[4*i+2], lightcolor[4*i+3]};
+    glColor3fv(&color[0]);
     glBegin(GL_POINTS);
-    glVertex3fv(light);
+      glVertex3fv(light);
     glEnd();
-  */
   }
 
   // Transformations for objects, involving translation and scaling
@@ -111,7 +110,6 @@ void drawOcclusionMap() {
       glutSolidTeapot(obj->size) ;
     }
   }
-  getScreenLightPos();
 }
 
 void drawSceneRender() {
@@ -186,12 +184,6 @@ void drawToScreen() {
   glBindTexture(GL_TEXTURE_2D, occlusionMap);
   glUniform1i(occlusionMapLoc, 0);
   
-  // Send scene render
-  /*
-  glActiveTexture(GL_TEXTURE1);
-  glBindTexture(GL_TEXTURE_2D, sceneRender);
-  glUniform1i(sceneRenderLoc, 1);
-  */
   glEnable(GL_TEXTURE_2D);
   glEnable(GL_BLEND);
   glBlendFunc(GL_SRC_ALPHA, GL_ONE);
