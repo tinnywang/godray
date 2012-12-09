@@ -158,7 +158,6 @@ void init() {
       vertexshader = initshaders(GL_VERTEX_SHADER, "shaders/light.vert.glsl") ;
       fragmentshader = initshaders(GL_FRAGMENT_SHADER, "shaders/light.frag.glsl") ;
       godrayshader = initshaders(GL_FRAGMENT_SHADER, "shaders/godray.frag.glsl");
-      godrayvertshader = initshaders(GL_VERTEX_SHADER, "shaders/godray.vert.glsl");
       shaderprogram = initprogram(vertexshader, fragmentshader) ;
       godrayshaderprogram = initprogram(vertexshader, godrayshader);
       enablelighting = glGetUniformLocation(shaderprogram,"enablelighting") ;
@@ -173,9 +172,8 @@ void init() {
       
       occlusionMapLoc = glGetUniformLocation(godrayshaderprogram, "occlusionMap");
       sceneRenderLoc = glGetUniformLocation(godrayshaderprogram, "sceneRender");
-      screenLightPos = glGetUniformLocation(godrayshaderprogram, "screenLightPos");
-      //vertexLocation = glGetAttribLocation(godrayshaderprogram, "vertex");
-      //textureCoordLocation = glGetAttribLocation(godrayshaderprogram, "textureCoord");
+      lightscreenLoc = glGetUniformLocation(godrayshaderprogram, "lightscreen");
+      numusedGodray = glGetUniformLocation(godrayshaderprogram, "numused");
 
       glEnable(GL_POINT_SMOOTH);
       glPointSize(10.0);

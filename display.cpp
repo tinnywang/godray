@@ -39,7 +39,7 @@ void transformvec (const GLfloat input[4], GLfloat output[4]) {
 }
 
 void getScreenLightPos(const GLfloat light[4], int offset) {
- // Calculate light position on screen
+  // Calculate light position on screen
   double projectionMatrix[16], modelViewMatrix[16];
   int view[4];
   glGetDoublev(GL_PROJECTION_MATRIX, projectionMatrix);
@@ -47,8 +47,12 @@ void getScreenLightPos(const GLfloat light[4], int offset) {
   glGetIntegerv(GL_VIEWPORT, view);
   GLdouble lightcoords[3];
   gluProject((double)light[0], (double)light[1], (double)light[2], modelViewMatrix, projectionMatrix, view, &lightcoords[0], &lightcoords[1], &lightcoords[2]);
-  screenLightX = lightcoords[0]/view[2];
-  screenLightY = lightcoords[1]/view[3];
+  /*
+  GLfloat _lightscreen[2] = {lightcoords[0]/view[2], lightcoords[1]/view[3]};
+  glUniform2fv(lightscreen+offset, 1, _lightscreen);
+  */
+  lightscreen[0+2*offset] = lightcoords[0]/view[2];
+  lightscreen[1+2*offset] = lightcoords[1]/view[3];
 }
 
 
@@ -183,6 +187,8 @@ void drawToScreen() {
   glActiveTexture(GL_TEXTURE0);
   glBindTexture(GL_TEXTURE_2D, occlusionMap);
   glUniform1i(occlusionMapLoc, 0);
+  glUniform1i(numusedGodray, numused);
+  glUniform2fv(lightscreenLoc, numused, &lightscreen[0]);
   
   glEnable(GL_TEXTURE_2D);
   glEnable(GL_BLEND);

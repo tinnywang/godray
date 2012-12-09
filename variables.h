@@ -32,7 +32,7 @@ EXTERN float fovy ;
 #endif 
 
 EXTERN bool useGlu; // Toggle use of "official" opengl/glm transform vs user 
-EXTERN GLuint vertexshader, fragmentshader, godrayshader, godrayvertshader, godrayshaderprogram, shaderprogram ; // shaders
+EXTERN GLuint vertexshader, fragmentshader, godrayshader, godrayshaderprogram, shaderprogram ; // shaders
 static enum {view, translate, scale} transop ; // which operation to transform 
 enum shape {cube, sphere, teapot} ;
 EXTERN float sx, sy ; // the scale in x and y 
@@ -42,6 +42,7 @@ EXTERN float tx, ty ; // the translation in x and y
 const int numLights = 10 ; 
 EXTERN GLfloat lightposn [4*numLights] ; // Light Positions
 EXTERN GLfloat lightcolor[4*numLights] ; // Light Colors
+EXTERN GLfloat lightscreen[2*numLights] ;
 EXTERN GLfloat lighttransf[4*numLights] ; // Lights transformed by modelview
 EXTERN int numused ;                     // How many lights are used 
 
@@ -69,8 +70,10 @@ EXTERN struct object {
 
 // Variables to set uniform params for lighting fragment shader 
 EXTERN GLuint lightcol ; 
-EXTERN GLuint lightpos ; 
+EXTERN GLuint lightpos ;
+EXTERN GLuint lightscreenLoc ;
 EXTERN GLuint numusedcol ; 
+EXTERN GLuint numusedGodray ;
 EXTERN GLuint enablelighting ; 
 EXTERN GLuint ambientcol ; 
 EXTERN GLuint diffusecol ; 
@@ -87,5 +90,3 @@ EXTERN GLuint screenLightPos ;
 EXTERN GLuint renderBuffer;
 EXTERN GLdouble screenLightX;
 EXTERN GLdouble screenLightY;
-EXTERN GLuint vertexLocation;
-EXTERN GLuint textureCoordLocation;

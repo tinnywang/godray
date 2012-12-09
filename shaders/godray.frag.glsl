@@ -1,6 +1,8 @@
 # version 120
 
-uniform vec2 screenLightPos;
+const int numLights = 10;
+uniform int numused;
+uniform vec2 lightscreen[numLights];
 uniform sampler2D occlusionMap;
 uniform sampler2D sceneRender;
 
@@ -11,20 +13,23 @@ uniform float weight = 5.65;
 const int NUM_SAMPLES = 100;
 
 void main() {
-  vec2 deltaTextCoord = vec2(gl_TexCoord[0].st - screenLightPos.xy);
-  vec2 textCoord = gl_TexCoord[0].st;
-  deltaTextCoord *= 1.0/float(NUM_SAMPLES)*density;
-  float illuminationDecay = 1.0;
-
   gl_FragColor = vec4(0, 0, 0, 1);
-  for (int i = 0; i < NUM_SAMPLES; i++) {
-    textCoord -= deltaTextCoord;
-    vec4 sample = texture2D(occlusionMap, textCoord);
-    sample *= illuminationDecay * weight;
-    gl_FragColor += sample;
-    illuminationDecay *= decay;
-  }
-  gl_FragColor *= exposure;
-  
-  //gl_FragColor += texture2D(sceneRender, gl_TexCoord[0].st);
+  for (int i = 0; i < numused; i++) {
+    vec2 lightScreenPos = lightscreen[i];
+    vec2 deltaTextCoord = vec2(gl_TexCoord[0].st - lightScreenPos.xy);
+    vec2 textCoord = gl_TexCoord[0].st;
+    deltaTextCoord *= 1.0/float(NUM_SAMPLES)*density;
+    float illuminationDecay = 1.0;
+
+    vec4 color = vec4(0, 0, 0, 1);
+    for (int j = 0; j < NUM_SAMPLES; j++) {
+      textCoord -= deltaTextCoord;
+      vec4 sample = texture2D(occlusionMap, textCoord);
+      sample *= illuminationDecay * weight;
+      color += sample;
+      illuminationDecay *= decay;
+    }
+    color *= exposure;
+    gl_FragColor += color;
+  } 
 }
